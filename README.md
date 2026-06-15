@@ -10,6 +10,7 @@
 
 /home/用户名/.local/share/uv/tools/astrbot/bin/pip install img2pdf
 
+jmcomic连接：https://github.com/hect0x7/JMComic-Crawler-Python/tree/master
 
 ## 本插件提供以下指令
 /jm view <id>：查看指定 ID 的详细信息（包括作者、标签等）。
