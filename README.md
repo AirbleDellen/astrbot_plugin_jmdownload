@@ -1,9 +1,11 @@
-##使用本插件前请确保您在#astrbot组件库中#安装了对应组件##
-##pip install jmcomic -U##
-##pip install img2pdf##
+# jmdownload 插件
 
-本组件提供两个指令：
-1./jm view 123
-查看jm123的信息，包括作者，标题标签
-2./jm down 123
-下载123，并将其转化为pdf输出，中途产生的文件会在输出后自动清理
+本插件用于在 AstrBot 中查询及下载 jmcomic 相关资源。
+
+## 安装说明
+
+在部署或运行本插件前，请确保在 AstrBot 的环境（venv/uv）中安装了必要的依赖：
+
+
+/home/用户名/.local/share/uv/tools/astrbot/bin/pip install jmcomic -U
+/home/用户名/.local/share/uv/tools/astrbot/bin/pip install img2pdf
