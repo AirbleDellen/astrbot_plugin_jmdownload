@@ -1,33 +1,43 @@
 from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
 from astrbot.api.star import Context, Star, register
 from astrbot.api import logger
+import astrbot.api.message_components as Comp
+import shutil
+import os
+import jmcomic
+from jmcomic import *
 
-@register("jmdl", "YourName", "报告塔台准备起飞", "1.0.0")
+@register("jmdownload", "AirbleDellen", "报告塔台准备起飞", "1.0.0")
 class MyPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
 
     async def initialize(self):
-        """可选择实现异步的插件初始化方法，当实例化该插件类之后会自动调用该方法。"""
+    @filter.command_group("jm")
+    def jm():
+        pass
 
-    # 注册指令的装饰器。指令名为 helloworld。注册成功后，发送 `/helloworld` 就会触发这个指令，并回复 `你好, {user_name}!`
-    @filter.command("helloworld")
-    async def helloworld(self, event: AstrMessageEvent):
-        """这是一个 hello world 指令""" # 这是 handler 的描述，将会被解析方便用户了解插件内容。建议填写。
-        user_name = event.get_sender_name()
-        message_str = event.message_str # 用户发的纯文本消息字符串
-        message_chain = event.get_messages() # 用户所发的消息的消息链 # from astrbot.api.message_components import *
-        logger.info(message_chain)
-        yield event.plain_result(f"Hello, {user_name}, 你发了 {message_str}!") # 发送一条纯文本消息
+    @jm.command("view")
+    async def add(self, event: AstrMessageEvent, a: str):
+        client = JmOption.default().new_jm_client()
+        page = client.search_site(search_query=a)
+        album: JmAlbumDetail = page.single_album
+        yield event.plain_result(f"作者：{album.author}\n标题：{album.name}\n标签：{album.tags}\n页数：{album.page_count}")
+        yield event.plain_result("下载请输入‘jm down 车牌号’指令")
 
-    @filter.command("helloworld2")
-    async def helloworld(self, event: AstrMessageEvent):
-        """这是一个 hello world 指令""" # 这是 handler 的描述，将会被解析方便用户了解插件内容。建议填写。
-        user_name = event.get_sender_name()
-        message_str = event.message_str # 用户发的纯文本消息字符串
-        message_chain = event.get_messages() # 用户所发的消息的消息链 # from astrbot.api.message_components import *
-        logger.info(message_chain)
-        yield event.plain_result(f"你出发了异类指令, {user_name}, 你发了 {message_str}!") # 发送一条纯文本消息
 
-    async def terminate(self):
-        """可选择实现异步的插件销毁方法，当插件被卸载/停用时会调用。"""
+    @jm.command("down")
+    async def sub(self, event: AstrMessageEvent, a: str):
+        client = JmOption.default().new_jm_client()
+        page = client.search_site(search_query=a)
+        album: JmAlbumDetail = page.single_album
+        yield event.plain_result(f"正在清空跑道{a}:{album.name}")
+        jmcomic.download_album(a, extra=jmcomic.Feature.export_pdf)
+        shutil.rmtree(album.name)
+        yield event.plain_result("正在滑行")
+        chain = [
+            Comp.File(file=f"[JM{a}]{album.name}.pdf", name=f"{album.name}")
+        ]
+        yield event.chain_result(chain)
+        os.remove(f"[JM{a}]{album.name}.pdf")
+        yield event.plain_result("允许起飞")
