@@ -36,7 +36,7 @@ class MyPlugin(Star):
         shutil.rmtree(album.name)
         yield event.plain_result("正在滑行")
         chain = [
-            Comp.File(file=f"[JM{a}]{album.name}.pdf", name=f"{album.name}")
+            Comp.File(file=f"[JM{a}]{album.name}.pdf", name=f"{album.name}.pdf")
         ]
         yield event.chain_result(chain)
         os.remove(f"[JM{a}]{album.name}.pdf")
