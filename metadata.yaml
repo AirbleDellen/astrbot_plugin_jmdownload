@@ -1,4 +1,4 @@
-name: jmdownload
+name: astrbot_plugin_jmdownload
 display_name: jmdownload
 desc: jm本本下载器
 version: v1.0.0 
